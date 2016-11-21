@@ -24,6 +24,7 @@ loadState = {
         // Load images
         game.load.image('player', 'assets/square-red.png');
         game.load.image('enemy', 'assets/square-blue.png');
+        game.load.image('platform', 'assets/square-green.png');
 
         // Load sound effects
     },
@@ -58,10 +59,81 @@ playState = {
     create: function() {
         'use strict';
 
+        this.keyboard = game.input.keyboard;
+
+        game.physics.startSystem(Phaser.Physics.ARCADE);
+
+
+        // Platforms
+        this.platforms = game.add.group();
+        this.platforms.enableBody = true;
+
+        // Ground
+        this.ground = this.platforms.create(0, game.world.height - 64, 'platform');
+        this.ground.scale.setTo(16, 1);
+        this.ground.body.immovable = true;
+
+        this.ground = this.platforms.create(0, 0, 'platform');
+        this.ground.scale.setTo(16, 1);
+        this.ground.body.immovable = true;
+
+        // Ledges
+        this.ledge = this.platforms.create(400, 400, 'platform');
+        this.ledge.scale.setTo(8, 1);
+        this.ledge.body.immovable = true;
+
+        this.ledge = this.platforms.create(-150, 250, 'platform');
+        this.ledge.scale.setTo(8, 1);
+        this.ledge.body.immovable = true;
+
+        // Player
+        this.player = game.add.sprite(32, game.world.height - 150, 'player');
+        this.player.anchor.setTo(0.5, 0.5);
+        this.playerSpeed = 200;
+        this.jumpSpeed = 500;
+
+        this.jumping = false;
+
+        game.physics.arcade.enable(this.player);
+
+        // Gravity
+        this.gravity = 800;
+        this.player.body.gravity.y = this.gravity;
+        this.player.body.collideWorldBounds = true;
+
+        // Controls
+        this.cursors = game.input.keyboard.addKeys({
+            'up': Phaser.Keyboard.W,
+            'down': Phaser.Keyboard.S,
+            'left': Phaser.Keyboard.A,
+            'right': Phaser.Keyboard.D,
+            'jump': Phaser.Keyboard.SPACEBAR
+        });
+
     },
     update: function() {
         'use strict';
 
+        game.physics.arcade.collide(this.player, this.platforms);
+        game.physics.arcade.collide(this.stars, this.platforms);
+        
+        this.player.body.velocity.x = 0;
+        if (this.cursors.right.isDown) {
+            this.player.body.velocity.x = this.playerSpeed;
+        }
+        else if (this.cursors.left.isDown) {
+            this.player.body.velocity.x = -this.playerSpeed;
+        }
+
+        if (this.player.body.touching.down) {
+            this.jumping = false;
+        }
+        
+        if (this.cursors.jump.isDown &&
+            !this.jumping) {
+            this.jumping = true;
+            this.player.body.velocity.y = -this.jumpSpeed;
+        }
     },
     end: function() {
         'use strict';
