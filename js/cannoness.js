@@ -58,6 +58,7 @@ titleState = {
 playState = {
     create: function() {
         'use strict';
+        var block;
 
         this.keyboard = game.input.keyboard;
 
@@ -69,35 +70,57 @@ playState = {
         this.platforms.enableBody = true;
 
         // Ground
-        this.ground = this.platforms.create(0, game.world.height - 64, 'platform');
-        this.ground.scale.setTo(16, 1);
-        this.ground.body.immovable = true;
+        block = this.platforms.create(0, game.world.height - 32, 'platform');
+        block.scale.setTo(25, 1);
+        block.body.immovable = true;
 
-        this.ground = this.platforms.create(0, 0, 'platform');
-        this.ground.scale.setTo(16, 1);
-        this.ground.body.immovable = true;
+        block = this.platforms.create(0, 0, 'platform');
+        block.scale.setTo(25, 1);
+        block.body.immovable = true;
+
+        // Walls
+        block = this.platforms.create(0, 32, 'platform');
+        block.scale.setTo(1, 17);
+        block.body.immovable = true;
+        
+        block = this.platforms.create(game.world.width - 32, 32, 'platform');
+        block.scale.setTo(1, 17);
+        block.body.immovable = true;
 
         // Ledges
-        this.ledge = this.platforms.create(400, 400, 'platform');
-        this.ledge.scale.setTo(8, 1);
-        this.ledge.body.immovable = true;
+        block = this.platforms.create(0, 250, 'platform');
+        block.scale.setTo(8, 1);
+        block.body.immovable = true;
 
-        this.ledge = this.platforms.create(-150, 250, 'platform');
-        this.ledge.scale.setTo(8, 1);
-        this.ledge.body.immovable = true;
+        block = this.platforms.create(100, 275, 'platform');
+        block.scale.setTo(8, 1);
+        block.body.immovable = true;
+
+        block = this.platforms.create(200, 350, 'platform');
+        block.scale.setTo(8, 1);
+        block.body.immovable = true;
+
+        block = this.platforms.create(300, 425, 'platform');
+        block.scale.setTo(8, 1);
+        block.body.immovable = true;
+
+        block = this.platforms.create(400, 500, 'platform');
+        block.scale.setTo(8, 1);
+        block.body.immovable = true;
 
         // Player
         this.player = game.add.sprite(32, game.world.height - 150, 'player');
         this.player.anchor.setTo(0.5, 0.5);
-        this.playerSpeed = 200;
-        this.jumpSpeed = 500;
+        this.playerSpeed = 300;
+        this.jumpSpeed = 600;
 
         this.jumping = false;
+        this.newJump = true;
 
         game.physics.arcade.enable(this.player);
 
         // Gravity
-        this.gravity = 800;
+        this.gravity = 2000;
         this.player.body.gravity.y = this.gravity;
         this.player.body.collideWorldBounds = true;
 
@@ -127,11 +150,19 @@ playState = {
 
         if (this.player.body.touching.down) {
             this.jumping = false;
+            if (!this.cursors.jump.isDown) {
+                this.newJump = true;
+            }
+        }
+        else {
+            this.jumping = true;
+            this.newJump = false;
         }
         
         if (this.cursors.jump.isDown &&
-            !this.jumping) {
+            !this.jumping && this.newJump) {
             this.jumping = true;
+            this.newJump = false;
             this.player.body.velocity.y = -this.jumpSpeed;
         }
     },
