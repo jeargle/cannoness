@@ -25,6 +25,7 @@ loadState = {
         game.load.image('player', 'assets/square-red.png');
         game.load.image('enemy', 'assets/square-blue.png');
         game.load.image('platform', 'assets/square-green.png');
+        game.load.image('ball', 'assets/ball.png');
 
         // Load sound effects
     },
@@ -119,10 +120,27 @@ playState = {
 
         game.physics.arcade.enable(this.player);
 
+        // Ball
+        this.balls = game.add.group();
+        this.balls.enableBody = true;
+        this.balls.physicsBodyType = Phaser.Physics.ARCADE;
+        this.balls.createMultiple(5, 'ball');
+        this.balls.setAll('anchor.x', 0.5);
+        this.balls.setAll('anchor.y', 1);
+        this.balls.setAll('outOfBoundsKill', true);
+        this.balls.setAll('checkWorldBounds', true);
+        this.ballSpeed = 1200;
+
+        this.ballTime = 0;
+        this.ballTimeOffset = 300;
+        this.ballSpeed = 500;
+        
         // Gravity
         this.gravity = 2000;
         this.player.body.gravity.y = this.gravity;
         this.player.body.collideWorldBounds = true;
+        // this.balls.gravity.y = this.gravity;
+        // this.balls.collideWorldBounds = true;
 
         // Controls
         this.cursors = game.input.keyboard.addKeys({
@@ -130,7 +148,8 @@ playState = {
             'down': Phaser.Keyboard.S,
             'left': Phaser.Keyboard.A,
             'right': Phaser.Keyboard.D,
-            'jump': Phaser.Keyboard.SPACEBAR
+            'jump': Phaser.Keyboard.SPACEBAR,
+            'fire': Phaser.Keyboard.SHIFT
         });
 
     },
@@ -138,7 +157,9 @@ playState = {
         'use strict';
 
         game.physics.arcade.collide(this.player, this.platforms);
-        game.physics.arcade.collide(this.stars, this.platforms);
+        game.physics.arcade.collide(this.balls, this.platforms);
+        game.physics.arcade.overlap(this.player, this.balls,
+                                    this.grabBall, null, this);
         
         this.player.body.velocity.x = 0;
         if (this.cursors.right.isDown) {
@@ -165,6 +186,30 @@ playState = {
             this.newJump = false;
             this.player.body.velocity.y = -this.jumpSpeed;
         }
+
+        if (this.cursors.fire.isDown) {
+            this.fire();
+        }
+    },
+    fire: function() {
+        'use strict';
+        var ball;
+
+        if (game.time.now > this.ballTime) {
+            this.ballTime = game.time.now + this.ballTimeOffset;
+            ball = this.balls.getFirstExists(false);
+
+            if (ball) {
+                ball.reset(this.player.x, this.player.y - 16);
+                ball.body.velocity.y = -this.ballSpeed;
+                ball.body.gravity.y = this.gravity;
+            }
+        }
+    },
+    grabBall: function(player, ball) {
+        'use strict';
+
+        ball.kill();
     },
     end: function() {
         'use strict';
