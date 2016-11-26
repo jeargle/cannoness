@@ -126,14 +126,14 @@ playState = {
         this.balls.physicsBodyType = Phaser.Physics.ARCADE;
         this.balls.createMultiple(5, 'ball');
         this.balls.setAll('anchor.x', 0.5);
-        this.balls.setAll('anchor.y', 1);
+        this.balls.setAll('anchor.y', 0.5);
         this.balls.setAll('outOfBoundsKill', true);
         this.balls.setAll('checkWorldBounds', true);
-        this.ballSpeed = 1200;
 
+        this.ballSpeed = 1200;
         this.ballTime = 0;
         this.ballTimeOffset = 300;
-        this.ballSpeed = 500;
+        this.ballDirection = 'right';
         
         // Gravity
         this.gravity = 2000;
@@ -157,6 +157,7 @@ playState = {
         'use strict';
 
         game.physics.arcade.collide(this.player, this.platforms);
+        game.physics.arcade.collide(this.balls, this.balls);
         game.physics.arcade.collide(this.balls, this.platforms);
         game.physics.arcade.overlap(this.player, this.balls,
                                     this.grabBall, null, this);
@@ -164,9 +165,17 @@ playState = {
         this.player.body.velocity.x = 0;
         if (this.cursors.right.isDown) {
             this.player.body.velocity.x = this.playerSpeed;
+            this.ballDirection = 'right';
         }
         else if (this.cursors.left.isDown) {
             this.player.body.velocity.x = -this.playerSpeed;
+            this.ballDirection = 'left';
+        }
+        else if (this.cursors.up.isDown) {
+            this.ballDirection = 'up';
+        }
+        else if (this.cursors.down.isDown) {
+            this.ballDirection = 'down';
         }
 
         if (this.player.body.touching.down) {
@@ -200,9 +209,32 @@ playState = {
             ball = this.balls.getFirstExists(false);
 
             if (ball) {
-                ball.reset(this.player.x, this.player.y - 16);
-                ball.body.velocity.y = -this.ballSpeed;
-                ball.body.gravity.y = this.gravity;
+                if (this.ballDirection === 'right' &&
+                    !this.player.body.touching.right) {
+                    ball.reset(this.player.x + 16, this.player.y);
+                    ball.body.velocity.x = this.ballSpeed;
+                    ball.body.velocity.y = -100;
+                    ball.body.gravity.y = this.gravity;
+                }
+                else if (this.ballDirection === 'left' &&
+                         !this.player.body.touching.left) {
+                    ball.reset(this.player.x - 16, this.player.y);
+                    ball.body.velocity.x = -this.ballSpeed;
+                    ball.body.velocity.y = -100;
+                    ball.body.gravity.y = this.gravity;
+                }
+                else if (this.ballDirection === 'up' &&
+                         !this.player.body.touching.up) {
+                    ball.reset(this.player.x, this.player.y - 16);
+                    ball.body.velocity.y = -this.ballSpeed;
+                    ball.body.gravity.y = this.gravity;
+                }
+                else if (this.ballDirection === 'down' &&
+                         !this.player.body.touching.down) {
+                    ball.reset(this.player.x, this.player.y + 16);
+                    ball.body.velocity.y = this.ballSpeed;
+                    ball.body.gravity.y = this.gravity;
+                }
             }
         }
     },
