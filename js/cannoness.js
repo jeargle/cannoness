@@ -59,7 +59,7 @@ titleState = {
 playState = {
     create: function() {
         'use strict';
-        var block;
+        var block, i, ball;
 
         this.keyboard = game.input.keyboard;
 
@@ -74,19 +74,23 @@ playState = {
         block = this.platforms.create(0, game.world.height - 32, 'platform');
         block.scale.setTo(25, 1);
         block.body.immovable = true;
+        block.body.moves = false;
 
         block = this.platforms.create(0, 0, 'platform');
         block.scale.setTo(25, 1);
         block.body.immovable = true;
+        block.body.moves = false;
 
         // Walls
         block = this.platforms.create(0, 32, 'platform');
         block.scale.setTo(1, 17);
         block.body.immovable = true;
+        block.body.moves = false;
         
         block = this.platforms.create(game.world.width - 32, 32, 'platform');
         block.scale.setTo(1, 17);
         block.body.immovable = true;
+        block.body.moves = false;
 
         // Ledges
         block = this.platforms.create(0, 250, 'platform');
@@ -110,7 +114,7 @@ playState = {
         block.body.immovable = true;
 
         // Player
-        this.player = game.add.sprite(32, game.world.height - 150, 'player');
+        this.player = game.add.sprite(64, game.world.height - 150, 'player');
         this.player.anchor.setTo(0.5, 0.5);
         this.playerSpeed = 300;
         this.jumpSpeed = 600;
@@ -129,8 +133,14 @@ playState = {
         this.balls.setAll('anchor.y', 0.5);
         this.balls.setAll('outOfBoundsKill', true);
         this.balls.setAll('checkWorldBounds', true);
+        // this.balls.setAll('bounce', 1);
+        // for (i=0; i<5; i++) {
+        //     ball = this.balls.create('ball');
+        //     ball.anchor.setTo(0.5, 0.5);
+        //     ball.body.bounce.set(1);
+        // }
 
-        this.ballSpeed = 1200;
+        this.ballSpeed = 300;
         this.ballTime = 0;
         this.ballTimeOffset = 300;
         this.ballDirection = 'right';
@@ -138,7 +148,7 @@ playState = {
         // Gravity
         this.gravity = 2000;
         this.player.body.gravity.y = this.gravity;
-        this.player.body.collideWorldBounds = true;
+        // this.player.body.collideWorldBounds = true;
         // this.balls.gravity.y = this.gravity;
         // this.balls.collideWorldBounds = true;
 
@@ -157,10 +167,12 @@ playState = {
         'use strict';
 
         game.physics.arcade.collide(this.player, this.platforms);
-        game.physics.arcade.collide(this.balls, this.balls);
+        game.physics.arcade.collide(this.balls);
         game.physics.arcade.collide(this.balls, this.platforms);
         game.physics.arcade.overlap(this.player, this.balls,
                                     this.grabBall, null, this);
+        game.physics.arcade.overlap(this.balls, this.balls,
+                                    this.separateBalls, null, this);
         
         this.player.body.velocity.x = 0;
         if (this.cursors.right.isDown) {
@@ -204,37 +216,45 @@ playState = {
         'use strict';
         var ball;
 
+        console.log('fire()');
+
         if (game.time.now > this.ballTime) {
             this.ballTime = game.time.now + this.ballTimeOffset;
             ball = this.balls.getFirstExists(false);
 
             if (ball) {
+                ball.body.bounce.set(0.1);
+                ball.body.drag.set(50);
+                // ball.body.setCircle(8);
                 if (this.ballDirection === 'right' &&
                     !this.player.body.touching.right) {
-                    ball.reset(this.player.x + 16, this.player.y);
+                    ball.reset(this.player.x + 32, this.player.y);
                     ball.body.velocity.x = this.ballSpeed;
                     ball.body.velocity.y = -100;
-                    ball.body.gravity.y = this.gravity;
+                    ball.body.gravity.y = this.gravity/10;
                 }
                 else if (this.ballDirection === 'left' &&
                          !this.player.body.touching.left) {
-                    ball.reset(this.player.x - 16, this.player.y);
+                    ball.reset(this.player.x - 32, this.player.y);
                     ball.body.velocity.x = -this.ballSpeed;
                     ball.body.velocity.y = -100;
-                    ball.body.gravity.y = this.gravity;
+                    ball.body.gravity.y = this.gravity/10;
                 }
                 else if (this.ballDirection === 'up' &&
                          !this.player.body.touching.up) {
-                    ball.reset(this.player.x, this.player.y - 16);
+                    ball.reset(this.player.x, this.player.y - 32);
                     ball.body.velocity.y = -this.ballSpeed;
-                    ball.body.gravity.y = this.gravity;
+                    ball.body.gravity.y = this.gravity/10;
                 }
                 else if (this.ballDirection === 'down' &&
                          !this.player.body.touching.down) {
-                    ball.reset(this.player.x, this.player.y + 16);
+                    ball.reset(this.player.x, this.player.y + 32);
                     ball.body.velocity.y = this.ballSpeed;
-                    ball.body.gravity.y = this.gravity;
+                    ball.body.gravity.y = this.gravity/10;
                 }
+            }
+            else {
+                console.log('no ball available');
             }
         }
     },
@@ -242,6 +262,9 @@ playState = {
         'use strict';
 
         ball.kill();
+    },
+    separateBalls: function(ball1, ball2) {
+        
     },
     end: function() {
         'use strict';
