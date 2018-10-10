@@ -2,36 +2,82 @@ var score, bootState, loadState, titleState, playState, endState, game;
 
 score = 0;
 
-bootState = {
+bootScene = {
+    key: 'boot',
+    active: true,
+    init: (config) => {
+        console.log('[BOOT] init', config);
+    },
+    preload: () => {
+        console.log('[BOOT] preload');
+    },
     create: function() {
         'use strict';
 
-        // Load physics engine
-        game.physics.startSystem(Phaser.Physics.ARCADE);
-        game.state.start('load');
+        game.scene.start('load');
+        game.scene.remove('boot');
+    },
+    update: () => {
+        console.log('[BOOT] update');
     }
 };
 
-loadState = {
+// loadState = {
+//     preload: function() {
+//         'use strict';
+//         var loadLbl;
+
+//         loadLbl = game.add.text(80, 160, 'loading...',
+//                                 {font: '30px Courier',
+//                                  fill: '#ffffff'});
+
+//         // Load images
+//         game.load.image('player', 'assets/square-red.png');
+//         game.load.image('enemy', 'assets/square-blue.png');
+//         game.load.image('platform', 'assets/square-green.png');
+//         game.load.image('ball', 'assets/ball.png');
+
+//         // Load sound effects
+//     },
+//     create: function() {
+//         'use strict';
+//         game.state.start('title');
+//     }
+// };
+
+loadScene = {
+    key: 'load',
+    renderToTexture: true,
+    x: 64,
+    y: 64,
+    width: 320,
+    height: 200,
+    init: (config) => {
+        console.log('[LOAD] init', config);
+    },
     preload: function() {
         'use strict';
         var loadLbl;
 
-        loadLbl = game.add.text(80, 160, 'loading...',
+        loadLbl = this.add.text(80, 160, 'loading...',
                                 {font: '30px Courier',
                                  fill: '#ffffff'});
-        
+
         // Load images
-        game.load.image('player', 'assets/square-red.png');
-        game.load.image('enemy', 'assets/square-blue.png');
-        game.load.image('platform', 'assets/square-green.png');
-        game.load.image('ball', 'assets/ball.png');
+        this.load.image('player', 'assets/square-red.png');
+        this.load.image('enemy', 'assets/square-blue.png');
+        this.load.image('platform', 'assets/square-green.png');
+        this.load.image('ball', 'assets/ball.png');
 
         // Load sound effects
     },
     create: function() {
         'use strict';
-        game.state.start('title');
+        game.scene.start('title');
+        game.scene.remove('load');
+    },
+    update: () => {
+        console.log('[LOAD] update');
     }
 };
 
@@ -86,7 +132,7 @@ playState = {
         block.scale.setTo(1, 17);
         block.body.immovable = true;
         block.body.moves = false;
-        
+
         block = this.platforms.create(game.world.width - 32, 32, 'platform');
         block.scale.setTo(1, 17);
         block.body.immovable = true;
@@ -144,7 +190,7 @@ playState = {
         this.ballTime = 0;
         this.ballTimeOffset = 300;
         this.ballDirection = 'right';
-        
+
         // Gravity
         this.gravity = 2000;
         this.player.body.gravity.y = this.gravity;
@@ -173,7 +219,7 @@ playState = {
                                     this.grabBall, null, this);
         game.physics.arcade.overlap(this.balls, this.balls,
                                     this.separateBalls, null, this);
-        
+
         this.player.body.velocity.x = 0;
         if (this.cursors.right.isDown) {
             this.player.body.velocity.x = this.playerSpeed;
@@ -200,7 +246,7 @@ playState = {
             this.jumping = true;
             this.newJump = false;
         }
-        
+
         if (this.cursors.jump.isDown &&
             !this.jumping && this.newJump) {
             this.jumping = true;
@@ -264,7 +310,7 @@ playState = {
         ball.kill();
     },
     separateBalls: function(ball1, ball2) {
-        
+
     },
     end: function() {
         'use strict';
@@ -297,12 +343,33 @@ endState = {
 };
 
 
-game = new Phaser.Game(800, 600, Phaser.AUTO, 'game-div');
+const gameConfig = {
+    // type: Phaser.CANVAS,
+    type: Phaser.AUTO,
+    parent: 'game-div',
+    width: 800,
+    height: 600,
+    physics: {
+        default: 'arcade',
+        arcade: {
+            debug: false
+        }
+    },
+    scene: [bootScene,
+            loadScene,
+            // titleScene, playScene, endScene
+           ]
+};
 
-game.state.add('boot', bootState);
-game.state.add('load', loadState);
-game.state.add('title', titleState);
-game.state.add('play', playState);
-game.state.add('end', endState);
+game = new Phaser.Game(gameConfig);
+game.scene.start('boot', { someData: '...arbitrary data' });
 
-game.state.start('boot');
+// game = new Phaser.Game(800, 600, Phaser.AUTO, 'game-div');
+
+// game.state.add('boot', bootState);
+// game.state.add('load', loadState);
+// game.state.add('title', titleState);
+// game.state.add('play', playState);
+// game.state.add('end', endState);
+
+// game.state.start('boot');
