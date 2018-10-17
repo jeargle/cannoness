@@ -253,53 +253,26 @@ playScene = {
             .setScale(8, 1)
             .refreshBody();
 
-
-        // Player
-        // this.player = game.add.sprite(64, game.world.height - 150, 'player');
-        // this.player.anchor.setTo(0.5, 0.5);
-        // this.playerSpeed = 300;
-        // this.jumpSpeed = 600;
-
-        // this.jumping = false;
-        // this.newJump = true;
-
-        // game.physics.arcade.enable(this.player);
-
         // Player
         this.player = this.physics.add.sprite(height - 150, 150, 'player');
-        this.player.setBounce(0.2);
+        // this.player.setBounce(0.2);
         this.player.setCollideWorldBounds(true);
+
         this.playerSpeed = 300;
         this.jumpSpeed = 600;
-        // this.jumpSpeed = 2000;
 
         this.jumping = false;
         this.newJump = true;
 
-        this.physics.add.collider(this.player, this.platforms);
-
-
         // Ball
-        // this.balls = game.add.group();
-        // this.balls.enableBody = true;
-        // this.balls.physicsBodyType = Phaser.Physics.ARCADE;
-
-        // this.balls = this.physics.add.group();
-
         this.balls = this.physics.add.group({
             key: 'ball',
             repeat: 5,
             // setXY: { x: 12, y: 0, stepX: 70 }
         });
 
-        this.physics.add.collider(this.balls, this.platforms);
-
-        // this.balls.createMultiple(5, 'ball');
-        // this.balls.setAll('anchor.x', 0.5);
-        // this.balls.setAll('anchor.y', 0.5);
         // this.balls.setAll('outOfBoundsKill', true);
         // this.balls.setAll('checkWorldBounds', true);
-        // this.balls.setCollideWorldBounds(true);
         // this.balls.setAll('bounce', 1);
         // for (i=0; i<5; i++) {
         //     ball = this.balls.create('ball');
@@ -314,8 +287,9 @@ playScene = {
 
         // Gravity
         this.gravity = 2000;
-        this.player.body.setAllowGravity(true);
-        this.player.body.setGravity(0, this.gravity);
+        // this.player.body.setAllowGravity(false);
+        // this.player.body.drag.set(50);
+        this.player.setGravity(0, this.gravity);
         // this.balls.gravity.y = this.gravity;
         // this.balls.collideWorldBounds = true;
 
@@ -328,6 +302,10 @@ playScene = {
             'jump': Phaser.Input.Keyboard.KeyCodes.SPACE,
             'fire': Phaser.Input.Keyboard.KeyCodes.SHIFT
         });
+
+        // this.player.setCollideWorldBounds(true);
+        this.physics.add.collider(this.player, this.platforms);
+        this.physics.add.collider(this.balls, this.platforms);
     },
     update: function() {
         'use strict';
@@ -342,9 +320,7 @@ playScene = {
         // game.physics.arcade.overlap(this.balls, this.balls,
         //                             this.separateBalls, null, this);
 
-        // this.player.body.velocity.x = 0;
         this.player.body.setVelocityX(0);
-        this.player.body.setVelocityY(0);
 
         if (this.cursors.right.isDown) {
             console.log('RIGHT');
@@ -403,15 +379,13 @@ playScene = {
                 if (ball) {
                     ball.body.bounce.set(0.1);
                     ball.body.drag.set(50);
-                    ball.body.setAllowGravity(true);
+                    // ball.body.setAllowGravity(false);
                     // ball.body.setCircle(8);
                     if (this.ballDirection === 'right' &&
                         !this.player.body.touching.right) {
                         // ball.reset(this.player.x + 32, this.player.y);
-                        // ball.body.velocity.x = this.ballSpeed;
-                        // ball.body.velocity.y = -100;
                         ball.setPosition(this.player.x + 32, this.player.y);
-                        ball.body.setGravity(0, this.gravity/10);
+                        // ball.body.setGravity(0, this.gravity/10);
                         ball.body.setVelocityX(this.ballSpeed);
                         ball.body.setVelocityY(-100);
                     }
@@ -419,9 +393,7 @@ playScene = {
                              !this.player.body.touching.left) {
                         // ball.reset(this.player.x - 32, this.player.y);
                         ball.setPosition(this.player.x - 32, this.player.y);
-                        // ball.body.velocity.x = -this.ballSpeed;
-                        // ball.body.velocity.y = -100;
-                        ball.body.setGravity(0, this.gravity/10);
+                        // ball.body.setGravity(0, this.gravity/10);
                         ball.body.setVelocityX(-this.ballSpeed);
                         ball.body.setVelocityY(-100);
                     }
@@ -429,16 +401,14 @@ playScene = {
                              !this.player.body.touching.up) {
                         // ball.reset(this.player.x, this.player.y - 32);
                         ball.setPosition(this.player.x, this.player.y - 32);
-                        // ball.body.velocity.y = -this.ballSpeed;
-                        ball.body.setGravity(0, this.gravity/10);
+                        // ball.body.setGravity(0, this.gravity/10);
                         ball.body.setVelocityY(-this.ballSpeed);
                     }
                     else if (this.ballDirection === 'down' &&
                              !this.player.body.touching.down) {
                         // ball.reset(this.player.x, this.player.y + 32);
                         ball.setPosition(this.player.x, this.player.y + 32);
-                        // ball.body.velocity.y = this.ballSpeed;
-                        ball.body.setGravity(0, this.gravity/10);
+                        // ball.body.setGravity(0, this.gravity/10);
                         ball.body.setVelocityY(this.ballSpeed);
                     }
                 }
@@ -506,7 +476,7 @@ const gameConfig = {
     physics: {
         default: 'arcade',
         arcade: {
-            // gravity: { y: 2000 },
+            gravity: { y: 300 },
             debug: false
         }
     },
