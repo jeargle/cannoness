@@ -1,4 +1,4 @@
-var score, bootState, loadState, titleState, playState, endState, game;
+var score, bootScene, loadScene, titleScene, playScene, endScene, game;
 
 score = 0;
 
@@ -81,104 +81,225 @@ loadScene = {
     }
 };
 
-titleState = {
+// titleState = {
+//     create: function() {
+//         'use strict';
+//         var nameLbl, startLbl, wKey;
+
+//         nameLbl = game.add.text(80, 160, 'CANNONESS',
+//                                 {font: '50px Courier',
+//                                  fill: '#ffffff'});
+//         startLbl = game.add.text(80, 240, 'press "W" to start',
+//                                  {font: '30px Courier',
+//                                   fill: '#ffffff'});
+
+//         wKey = game.input.keyboard.addKey(Phaser.Keyboard.W);
+//         wKey.onDown.addOnce(this.start, this);
+//     },
+//     start: function() {
+//         'use strict';
+//         game.state.start('play');
+//     }
+// };
+
+titleScene = {
+    key: 'title',
+    init: (config) => {
+        console.log('[TITLE] init', config);
+    },
+    preload: () => {
+        console.log('[TITLE] preload');
+    },
     create: function() {
         'use strict';
-        var nameLbl, startLbl, wKey;
+        var nameLbl, startLbl;
 
-        nameLbl = game.add.text(80, 160, 'CANNONESS',
+        nameLbl = this.add.text(80, 160, 'CANNONESS',
                                 {font: '50px Courier',
                                  fill: '#ffffff'});
-        startLbl = game.add.text(80, 240, 'press "W" to start',
+        startLbl = this.add.text(80, 240, 'press "W" to start',
                                  {font: '30px Courier',
                                   fill: '#ffffff'});
 
-        wKey = game.input.keyboard.addKey(Phaser.Keyboard.W);
-        wKey.onDown.addOnce(this.start, this);
+        this.input.keyboard.on('keydown_W', this.start, this);
     },
-    start: function() {
-        'use strict';
-        game.state.start('play');
+    update: () => {
+        console.log('[TITLE] update');
+    },
+    extend: {
+        start: function() {
+            'use strict';
+            console.log('[TITLE] start');
+            game.scene.switch('title', 'play');
+        }
     }
 };
 
+
 playState = {
+    update: function() {
+        'use strict';
+
+    },
+};
+
+playScene = {
+    key: 'play',
     create: function() {
         'use strict';
-        var block, i, ball;
+        var height, width, block, i, ball;
 
-        this.keyboard = game.input.keyboard;
+        console.log('[PLAY] create');
 
-        game.physics.startSystem(Phaser.Physics.ARCADE);
+        // this.keyboard = game.input.keyboard;
+
+        // game.physics.startSystem(Phaser.Physics.ARCADE);
 
 
         // Platforms
-        this.platforms = game.add.group();
-        this.platforms.enableBody = true;
+        // this.platforms = game.add.group();
+        // this.platforms.enableBody = true;
+        this.platforms = this.physics.add.staticGroup();
+
+        height = 600;
+        width = 800;
 
         // Ground
-        block = this.platforms.create(0, game.world.height - 32, 'platform');
-        block.scale.setTo(25, 1);
-        block.body.immovable = true;
-        block.body.moves = false;
+        block = this.platforms.create(0, height - 32, 'platform')
+            .setOrigin(0, 0)
+            .setScale(25, 1)
+            .refreshBody();
 
-        block = this.platforms.create(0, 0, 'platform');
-        block.scale.setTo(25, 1);
-        block.body.immovable = true;
-        block.body.moves = false;
+        // block = this.platforms.create(0, game.world.height - 32, 'platform');
+        // block.scale.setTo(25, 1);
+        // block.body.immovable = true;
+        // block.body.moves = false;
+
+        // block = this.platforms.create(0, 0, 'platform');
+        // block.scale.setTo(25, 1);
+        // block.body.immovable = true;
+        // block.body.moves = false;
+
+        block = this.platforms.create(0, 0, 'platform')
+            .setOrigin(0, 0)
+            .setScale(25, 1)
+            .refreshBody();
+
 
         // Walls
-        block = this.platforms.create(0, 32, 'platform');
-        block.scale.setTo(1, 17);
-        block.body.immovable = true;
-        block.body.moves = false;
+        // block = this.platforms.create(0, 32, 'platform');
+        // block.scale.setTo(1, 17);
+        // block.body.immovable = true;
+        // block.body.moves = false;
 
-        block = this.platforms.create(game.world.width - 32, 32, 'platform');
-        block.scale.setTo(1, 17);
-        block.body.immovable = true;
-        block.body.moves = false;
+        block = this.platforms.create(0, 32, 'platform')
+            .setOrigin(0, 0)
+            .setScale(1, 17)
+            .refreshBody();
+
+        // block = this.platforms.create(game.world.width - 32, 32, 'platform');
+        // block.scale.setTo(1, 17);
+        // block.body.immovable = true;
+        // block.body.moves = false;
+
+        block = this.platforms.create(width - 32, 32, 'platform')
+            .setOrigin(0, 0)
+            .setScale(1, 17)
+            .refreshBody();
 
         // Ledges
-        block = this.platforms.create(0, 250, 'platform');
-        block.scale.setTo(8, 1);
-        block.body.immovable = true;
+        // block = this.platforms.create(0, 250, 'platform');
+        // block.scale.setTo(8, 1);
+        // block.body.immovable = true;
 
-        block = this.platforms.create(100, 275, 'platform');
-        block.scale.setTo(8, 1);
-        block.body.immovable = true;
+        // block = this.platforms.create(100, 275, 'platform');
+        // block.scale.setTo(8, 1);
+        // block.body.immovable = true;
 
-        block = this.platforms.create(200, 350, 'platform');
-        block.scale.setTo(8, 1);
-        block.body.immovable = true;
+        // block = this.platforms.create(200, 350, 'platform');
+        // block.scale.setTo(8, 1);
+        // block.body.immovable = true;
 
-        block = this.platforms.create(300, 425, 'platform');
-        block.scale.setTo(8, 1);
-        block.body.immovable = true;
+        // block = this.platforms.create(300, 425, 'platform');
+        // block.scale.setTo(8, 1);
+        // block.body.immovable = true;
 
-        block = this.platforms.create(400, 500, 'platform');
-        block.scale.setTo(8, 1);
-        block.body.immovable = true;
+        // block = this.platforms.create(400, 500, 'platform');
+        // block.scale.setTo(8, 1);
+        // block.body.immovable = true;
+
+        block = this.platforms.create(0, 250, 'platform')
+            .setOrigin(0, 0)
+            .setScale(8, 1)
+            .refreshBody();
+
+        block = this.platforms.create(100, 275, 'platform')
+            .setOrigin(0, 0)
+            .setScale(8, 1)
+            .refreshBody();
+
+        block = this.platforms.create(200, 350, 'platform')
+            .setOrigin(0, 0)
+            .setScale(8, 1)
+            .refreshBody();
+
+        block = this.platforms.create(300, 425, 'platform')
+            .setOrigin(0, 0)
+            .setScale(8, 1)
+            .refreshBody();
+
+        block = this.platforms.create(400, 500, 'platform')
+            .setOrigin(0, 0)
+            .setScale(8, 1)
+            .refreshBody();
+
 
         // Player
-        this.player = game.add.sprite(64, game.world.height - 150, 'player');
-        this.player.anchor.setTo(0.5, 0.5);
+        // this.player = game.add.sprite(64, game.world.height - 150, 'player');
+        // this.player.anchor.setTo(0.5, 0.5);
+        // this.playerSpeed = 300;
+        // this.jumpSpeed = 600;
+
+        // this.jumping = false;
+        // this.newJump = true;
+
+        // game.physics.arcade.enable(this.player);
+
+        // Player
+        this.player = this.physics.add.sprite(height - 150, 150, 'player');
+        this.player.setBounce(0.2);
+        this.player.setCollideWorldBounds(true);
         this.playerSpeed = 300;
         this.jumpSpeed = 600;
+        // this.jumpSpeed = 2000;
 
         this.jumping = false;
         this.newJump = true;
 
-        game.physics.arcade.enable(this.player);
+        this.physics.add.collider(this.player, this.platforms);
+
 
         // Ball
-        this.balls = game.add.group();
-        this.balls.enableBody = true;
-        this.balls.physicsBodyType = Phaser.Physics.ARCADE;
-        this.balls.createMultiple(5, 'ball');
-        this.balls.setAll('anchor.x', 0.5);
-        this.balls.setAll('anchor.y', 0.5);
-        this.balls.setAll('outOfBoundsKill', true);
-        this.balls.setAll('checkWorldBounds', true);
+        // this.balls = game.add.group();
+        // this.balls.enableBody = true;
+        // this.balls.physicsBodyType = Phaser.Physics.ARCADE;
+
+        // this.balls = this.physics.add.group();
+
+        this.balls = this.physics.add.group({
+            key: 'ball',
+            repeat: 5,
+            // setXY: { x: 12, y: 0, stepX: 70 }
+        });
+
+        this.physics.add.collider(this.balls, this.platforms);
+
+        // this.balls.createMultiple(5, 'ball');
+        // this.balls.setAll('anchor.x', 0.5);
+        // this.balls.setAll('anchor.y', 0.5);
+        // this.balls.setAll('outOfBoundsKill', true);
+        // this.balls.setAll('checkWorldBounds', true);
+        // this.balls.setCollideWorldBounds(true);
         // this.balls.setAll('bounce', 1);
         // for (i=0; i<5; i++) {
         //     ball = this.balls.create('ball');
@@ -193,46 +314,54 @@ playState = {
 
         // Gravity
         this.gravity = 2000;
-        this.player.body.gravity.y = this.gravity;
-        // this.player.body.collideWorldBounds = true;
+        this.player.body.setAllowGravity(true);
+        this.player.body.setGravity(0, this.gravity);
         // this.balls.gravity.y = this.gravity;
         // this.balls.collideWorldBounds = true;
 
         // Controls
-        this.cursors = game.input.keyboard.addKeys({
-            'up': Phaser.Keyboard.W,
-            'down': Phaser.Keyboard.S,
-            'left': Phaser.Keyboard.A,
-            'right': Phaser.Keyboard.D,
-            'jump': Phaser.Keyboard.SPACEBAR,
-            'fire': Phaser.Keyboard.SHIFT
+        this.cursors = this.input.keyboard.addKeys({
+            'up': Phaser.Input.Keyboard.KeyCodes.W,
+            'down': Phaser.Input.Keyboard.KeyCodes.S,
+            'left': Phaser.Input.Keyboard.KeyCodes.A,
+            'right': Phaser.Input.Keyboard.KeyCodes.D,
+            'jump': Phaser.Input.Keyboard.KeyCodes.SPACE,
+            'fire': Phaser.Input.Keyboard.KeyCodes.SHIFT
         });
-
     },
     update: function() {
         'use strict';
 
-        game.physics.arcade.collide(this.player, this.platforms);
-        game.physics.arcade.collide(this.balls);
-        game.physics.arcade.collide(this.balls, this.platforms);
-        game.physics.arcade.overlap(this.player, this.balls,
-                                    this.grabBall, null, this);
-        game.physics.arcade.overlap(this.balls, this.balls,
-                                    this.separateBalls, null, this);
+        console.log('[PLAY] update');
 
-        this.player.body.velocity.x = 0;
+        // game.physics.arcade.collide(this.player, this.platforms);
+        // game.physics.arcade.collide(this.balls);
+        // game.physics.arcade.collide(this.balls, this.platforms);
+        // game.physics.arcade.overlap(this.player, this.balls,
+        //                             this.grabBall, null, this);
+        // game.physics.arcade.overlap(this.balls, this.balls,
+        //                             this.separateBalls, null, this);
+
+        // this.player.body.velocity.x = 0;
+        this.player.body.setVelocityX(0);
+        this.player.body.setVelocityY(0);
+
         if (this.cursors.right.isDown) {
-            this.player.body.velocity.x = this.playerSpeed;
+            console.log('RIGHT');
+            this.player.body.setVelocityX(this.playerSpeed);
             this.ballDirection = 'right';
         }
         else if (this.cursors.left.isDown) {
-            this.player.body.velocity.x = -this.playerSpeed;
+            console.log('LEFT');
+            this.player.body.setVelocityX(-this.playerSpeed);
             this.ballDirection = 'left';
         }
         else if (this.cursors.up.isDown) {
+            console.log('UP');
             this.ballDirection = 'up';
         }
         else if (this.cursors.down.isDown) {
+            console.log('DOWN');
             this.ballDirection = 'down';
         }
 
@@ -251,70 +380,95 @@ playState = {
             !this.jumping && this.newJump) {
             this.jumping = true;
             this.newJump = false;
-            this.player.body.velocity.y = -this.jumpSpeed;
+            // this.player.body.velocity.y = -this.jumpSpeed;
+            this.player.body.setVelocityY(-this.jumpSpeed);
         }
 
         if (this.cursors.fire.isDown) {
             this.fire();
         }
     },
-    fire: function() {
-        'use strict';
-        var ball;
+    extend: {
+        fire: function() {
+            'use strict';
+            var ball;
 
-        console.log('fire()');
+            console.log('fire()');
 
-        if (game.time.now > this.ballTime) {
-            this.ballTime = game.time.now + this.ballTimeOffset;
-            ball = this.balls.getFirstExists(false);
+            if (this.time.now > this.ballTime) {
+                this.ballTime = this.time.now + this.ballTimeOffset;
+                // ball = this.balls.getFirstExists(false);
+                ball = this.balls.get();
 
-            if (ball) {
-                ball.body.bounce.set(0.1);
-                ball.body.drag.set(50);
-                // ball.body.setCircle(8);
-                if (this.ballDirection === 'right' &&
-                    !this.player.body.touching.right) {
-                    ball.reset(this.player.x + 32, this.player.y);
-                    ball.body.velocity.x = this.ballSpeed;
-                    ball.body.velocity.y = -100;
-                    ball.body.gravity.y = this.gravity/10;
+                if (ball) {
+                    ball.body.bounce.set(0.1);
+                    ball.body.drag.set(50);
+                    ball.body.setAllowGravity(true);
+                    // ball.body.setCircle(8);
+                    if (this.ballDirection === 'right' &&
+                        !this.player.body.touching.right) {
+                        // ball.reset(this.player.x + 32, this.player.y);
+                        // ball.body.velocity.x = this.ballSpeed;
+                        // ball.body.velocity.y = -100;
+                        ball.setPosition(this.player.x + 32, this.player.y);
+                        ball.body.setGravity(0, this.gravity/10);
+                        ball.body.setVelocityX(this.ballSpeed);
+                        ball.body.setVelocityY(-100);
+                    }
+                    else if (this.ballDirection === 'left' &&
+                             !this.player.body.touching.left) {
+                        // ball.reset(this.player.x - 32, this.player.y);
+                        ball.setPosition(this.player.x - 32, this.player.y);
+                        // ball.body.velocity.x = -this.ballSpeed;
+                        // ball.body.velocity.y = -100;
+                        ball.body.setGravity(0, this.gravity/10);
+                        ball.body.setVelocityX(-this.ballSpeed);
+                        ball.body.setVelocityY(-100);
+                    }
+                    else if (this.ballDirection === 'up' &&
+                             !this.player.body.touching.up) {
+                        // ball.reset(this.player.x, this.player.y - 32);
+                        ball.setPosition(this.player.x, this.player.y - 32);
+                        // ball.body.velocity.y = -this.ballSpeed;
+                        ball.body.setGravity(0, this.gravity/10);
+                        ball.body.setVelocityY(-this.ballSpeed);
+                    }
+                    else if (this.ballDirection === 'down' &&
+                             !this.player.body.touching.down) {
+                        // ball.reset(this.player.x, this.player.y + 32);
+                        ball.setPosition(this.player.x, this.player.y + 32);
+                        // ball.body.velocity.y = this.ballSpeed;
+                        ball.body.setGravity(0, this.gravity/10);
+                        ball.body.setVelocityY(this.ballSpeed);
+                    }
                 }
-                else if (this.ballDirection === 'left' &&
-                         !this.player.body.touching.left) {
-                    ball.reset(this.player.x - 32, this.player.y);
-                    ball.body.velocity.x = -this.ballSpeed;
-                    ball.body.velocity.y = -100;
-                    ball.body.gravity.y = this.gravity/10;
-                }
-                else if (this.ballDirection === 'up' &&
-                         !this.player.body.touching.up) {
-                    ball.reset(this.player.x, this.player.y - 32);
-                    ball.body.velocity.y = -this.ballSpeed;
-                    ball.body.gravity.y = this.gravity/10;
-                }
-                else if (this.ballDirection === 'down' &&
-                         !this.player.body.touching.down) {
-                    ball.reset(this.player.x, this.player.y + 32);
-                    ball.body.velocity.y = this.ballSpeed;
-                    ball.body.gravity.y = this.gravity/10;
+                else {
+                    console.log('no ball available');
                 }
             }
-            else {
-                console.log('no ball available');
-            }
+        },
+        grabBall: function(player, ball) {
+            'use strict';
+
+            ball.kill();
+        },
+        separateBalls: function(ball1, ball2) {
+
+        },
+        end: function() {
+            'use strict';
+            console.log('[PLAY] end');
+            game.scene.switch('play', 'end')
         }
-    },
-    grabBall: function(player, ball) {
-        'use strict';
-
-        ball.kill();
-    },
-    separateBalls: function(ball1, ball2) {
-
-    },
-    end: function() {
-        'use strict';
-        game.state.start('end');
+        // interact: function() {
+        //     'use strict';
+        //     console.log('[PLAY] INTERACT');
+        // },
+        // end: function() {
+        //     'use strict';
+        //     console.log('[PLAY] end');
+        //     game.scene.switch('play', 'end')
+        // }
     }
 };
 
@@ -352,24 +506,18 @@ const gameConfig = {
     physics: {
         default: 'arcade',
         arcade: {
+            // gravity: { y: 2000 },
             debug: false
         }
     },
-    scene: [bootScene,
-            loadScene,
-            // titleScene, playScene, endScene
-           ]
+    scene: [
+        bootScene,
+        loadScene,
+        titleScene,
+        playScene,
+        // endScene
+    ]
 };
 
 game = new Phaser.Game(gameConfig);
 game.scene.start('boot', { someData: '...arbitrary data' });
-
-// game = new Phaser.Game(800, 600, Phaser.AUTO, 'game-div');
-
-// game.state.add('boot', bootState);
-// game.state.add('load', loadState);
-// game.state.add('title', titleState);
-// game.state.add('play', playState);
-// game.state.add('end', endState);
-
-// game.state.start('boot');
