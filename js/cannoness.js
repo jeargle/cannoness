@@ -225,6 +225,7 @@ playScene = {
         // Ball
         this.balls = this.physics.add.group({
             key: 'ball',
+            active: false,
             repeat: 5,
             // setXY: { x: 12, y: 0, stepX: 70 }
         });
@@ -264,13 +265,15 @@ playScene = {
         // this.player.setCollideWorldBounds(true);
         this.physics.add.collider(this.player, this.platforms);
         this.physics.add.collider(this.balls, this.platforms);
+        this.physics.add.collider(this.balls);
+        this.physics.add.overlap(this.player, this.balls,
+                                 this.grabBall, null, this);
     },
     update: function() {
         'use strict';
 
         console.log('[PLAY] update');
 
-        // game.physics.arcade.collide(this.player, this.platforms);
         // game.physics.arcade.collide(this.balls);
         // game.physics.arcade.collide(this.balls, this.platforms);
         // game.physics.arcade.overlap(this.player, this.balls,
@@ -331,42 +334,33 @@ playScene = {
 
             if (this.time.now > this.ballTime) {
                 this.ballTime = this.time.now + this.ballTimeOffset;
-                // ball = this.balls.getFirstExists(false);
-                ball = this.balls.get();
+                ball = this.balls.getFirstDead();
 
                 if (ball) {
+                    ball.active = true;
+                    ball.visible = true;
                     ball.body.bounce.set(0.1);
                     ball.body.drag.set(50);
-                    // ball.body.setAllowGravity(false);
-                    // ball.body.setCircle(8);
                     if (this.ballDirection === 'right' &&
                         !this.player.body.touching.right) {
-                        // ball.reset(this.player.x + 32, this.player.y);
                         ball.setPosition(this.player.x + 32, this.player.y);
-                        // ball.body.setGravity(0, this.gravity/10);
                         ball.body.setVelocityX(this.ballSpeed);
                         ball.body.setVelocityY(-100);
                     }
                     else if (this.ballDirection === 'left' &&
                              !this.player.body.touching.left) {
-                        // ball.reset(this.player.x - 32, this.player.y);
                         ball.setPosition(this.player.x - 32, this.player.y);
-                        // ball.body.setGravity(0, this.gravity/10);
                         ball.body.setVelocityX(-this.ballSpeed);
                         ball.body.setVelocityY(-100);
                     }
                     else if (this.ballDirection === 'up' &&
                              !this.player.body.touching.up) {
-                        // ball.reset(this.player.x, this.player.y - 32);
                         ball.setPosition(this.player.x, this.player.y - 32);
-                        // ball.body.setGravity(0, this.gravity/10);
                         ball.body.setVelocityY(-this.ballSpeed);
                     }
                     else if (this.ballDirection === 'down' &&
                              !this.player.body.touching.down) {
-                        // ball.reset(this.player.x, this.player.y + 32);
                         ball.setPosition(this.player.x, this.player.y + 32);
-                        // ball.body.setGravity(0, this.gravity/10);
                         ball.body.setVelocityY(this.ballSpeed);
                     }
                 }
@@ -378,7 +372,7 @@ playScene = {
         grabBall: function(player, ball) {
             'use strict';
 
-            ball.kill();
+            this.balls.killAndHide(ball);
         },
         separateBalls: function(ball1, ball2) {
 
@@ -388,15 +382,6 @@ playScene = {
             console.log('[PLAY] end');
             game.scene.switch('play', 'end')
         }
-        // interact: function() {
-        //     'use strict';
-        //     console.log('[PLAY] INTERACT');
-        // },
-        // end: function() {
-        //     'use strict';
-        //     console.log('[PLAY] end');
-        //     game.scene.switch('play', 'end')
-        // }
     }
 };
 
