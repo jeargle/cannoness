@@ -157,8 +157,6 @@ playScene = {
 
 
         // Platforms
-        // this.platforms = game.add.group();
-        // this.platforms.enableBody = true;
         this.platforms = this.physics.add.staticGroup();
 
         height = 600;
@@ -170,16 +168,6 @@ playScene = {
             .setScale(25, 1)
             .refreshBody();
 
-        // block = this.platforms.create(0, game.world.height - 32, 'platform');
-        // block.scale.setTo(25, 1);
-        // block.body.immovable = true;
-        // block.body.moves = false;
-
-        // block = this.platforms.create(0, 0, 'platform');
-        // block.scale.setTo(25, 1);
-        // block.body.immovable = true;
-        // block.body.moves = false;
-
         block = this.platforms.create(0, 0, 'platform')
             .setOrigin(0, 0)
             .setScale(25, 1)
@@ -187,20 +175,10 @@ playScene = {
 
 
         // Walls
-        // block = this.platforms.create(0, 32, 'platform');
-        // block.scale.setTo(1, 17);
-        // block.body.immovable = true;
-        // block.body.moves = false;
-
         block = this.platforms.create(0, 32, 'platform')
             .setOrigin(0, 0)
             .setScale(1, 17)
             .refreshBody();
-
-        // block = this.platforms.create(game.world.width - 32, 32, 'platform');
-        // block.scale.setTo(1, 17);
-        // block.body.immovable = true;
-        // block.body.moves = false;
 
         block = this.platforms.create(width - 32, 32, 'platform')
             .setOrigin(0, 0)
@@ -208,26 +186,6 @@ playScene = {
             .refreshBody();
 
         // Ledges
-        // block = this.platforms.create(0, 250, 'platform');
-        // block.scale.setTo(8, 1);
-        // block.body.immovable = true;
-
-        // block = this.platforms.create(100, 275, 'platform');
-        // block.scale.setTo(8, 1);
-        // block.body.immovable = true;
-
-        // block = this.platforms.create(200, 350, 'platform');
-        // block.scale.setTo(8, 1);
-        // block.body.immovable = true;
-
-        // block = this.platforms.create(300, 425, 'platform');
-        // block.scale.setTo(8, 1);
-        // block.body.immovable = true;
-
-        // block = this.platforms.create(400, 500, 'platform');
-        // block.scale.setTo(8, 1);
-        // block.body.immovable = true;
-
         block = this.platforms.create(0, 250, 'platform')
             .setOrigin(0, 0)
             .setScale(8, 1)
