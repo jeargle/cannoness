@@ -2,6 +2,7 @@ var score, bootScene, loadScene, titleScene, playScene, endScene, game;
 
 score = 0;
 
+
 bootScene = {
     key: 'boot',
     active: true,
@@ -22,28 +23,6 @@ bootScene = {
     }
 };
 
-// loadState = {
-//     preload: function() {
-//         'use strict';
-//         var loadLbl;
-
-//         loadLbl = game.add.text(80, 160, 'loading...',
-//                                 {font: '30px Courier',
-//                                  fill: '#ffffff'});
-
-//         // Load images
-//         game.load.image('player', 'assets/square-red.png');
-//         game.load.image('enemy', 'assets/square-blue.png');
-//         game.load.image('platform', 'assets/square-green.png');
-//         game.load.image('ball', 'assets/ball.png');
-
-//         // Load sound effects
-//     },
-//     create: function() {
-//         'use strict';
-//         game.state.start('title');
-//     }
-// };
 
 loadScene = {
     key: 'load',
@@ -81,26 +60,6 @@ loadScene = {
     }
 };
 
-// titleState = {
-//     create: function() {
-//         'use strict';
-//         var nameLbl, startLbl, wKey;
-
-//         nameLbl = game.add.text(80, 160, 'CANNONESS',
-//                                 {font: '50px Courier',
-//                                  fill: '#ffffff'});
-//         startLbl = game.add.text(80, 240, 'press "W" to start',
-//                                  {font: '30px Courier',
-//                                   fill: '#ffffff'});
-
-//         wKey = game.input.keyboard.addKey(Phaser.Keyboard.W);
-//         wKey.onDown.addOnce(this.start, this);
-//     },
-//     start: function() {
-//         'use strict';
-//         game.state.start('play');
-//     }
-// };
 
 titleScene = {
     key: 'title',
@@ -135,13 +94,6 @@ titleScene = {
     }
 };
 
-
-playState = {
-    update: function() {
-        'use strict';
-
-    },
-};
 
 playScene = {
     key: 'play',
@@ -249,8 +201,6 @@ playScene = {
         // this.player.body.setAllowGravity(false);
         // this.player.body.drag.set(50);
         this.player.setGravity(0, this.gravity);
-        // this.balls.gravity.y = this.gravity;
-        // this.balls.collideWorldBounds = true;
 
         // Controls
         this.cursors = this.input.keyboard.addKeys({
@@ -262,24 +212,18 @@ playScene = {
             'fire': Phaser.Input.Keyboard.KeyCodes.SHIFT
         });
 
-        // this.player.setCollideWorldBounds(true);
         this.physics.add.collider(this.player, this.platforms);
         this.physics.add.collider(this.balls, this.platforms);
         this.physics.add.collider(this.balls);
         this.physics.add.overlap(this.player, this.balls,
                                  this.grabBall, null, this);
+        // game.physics.arcade.overlap(this.balls, this.balls,
+        //                             this.separateBalls, null, this);
     },
     update: function() {
         'use strict';
 
         console.log('[PLAY] update');
-
-        // game.physics.arcade.collide(this.balls);
-        // game.physics.arcade.collide(this.balls, this.platforms);
-        // game.physics.arcade.overlap(this.player, this.balls,
-        //                             this.grabBall, null, this);
-        // game.physics.arcade.overlap(this.balls, this.balls,
-        //                             this.separateBalls, null, this);
 
         this.player.body.setVelocityX(0);
 
@@ -317,7 +261,6 @@ playScene = {
             !this.jumping && this.newJump) {
             this.jumping = true;
             this.newJump = false;
-            // this.player.body.velocity.y = -this.jumpSpeed;
             this.player.body.setVelocityY(-this.jumpSpeed);
         }
 
@@ -385,27 +328,29 @@ playScene = {
     }
 };
 
-endState = {
+endScene = {
+    key: 'end',
     create: function() {
         'use strict';
-        var scoreLbl, nameLbl, startLbl, wKey;
+        var scoreLbl, nameLbl, startLbl;
 
-        scoreLbl = game.add.text(600, 10, 'Score: ' + score,
+        scoreLbl = this.add.text(600, 10, 'Score: ' + score,
                                  {font: '30px Courier',
                                   fill: '#ffffff'});
-        nameLbl = game.add.text(80, 160, 'YOU DIED',
+        nameLbl = this.add.text(80, 160, 'YOU DIED',
                                 {font: '50px Courier',
                                  fill: '#ffffff'});
-        startLbl = game.add.text(80, 240, 'press "W" to restart',
+        startLbl = this.add.text(80, 240, 'press "W" to restart',
                                  {font: '30px Courier',
                                   fill: '#ffffff'});
 
-        wKey = game.input.keyboard.addKey(Phaser.Keyboard.W);
-        wKey.onDown.addOnce(this.restart, this);
+        this.input.keyboard.on('keydown_W', this.restart, this);
     },
-    restart: function() {
-        'use strict';
-        game.state.start('title');
+    extend: {
+        restart: function() {
+            'use strict';
+            game.scene.switch('end', 'title')
+        }
     }
 };
 
@@ -428,7 +373,7 @@ const gameConfig = {
         loadScene,
         titleScene,
         playScene,
-        // endScene
+        endScene
     ]
 };
 
