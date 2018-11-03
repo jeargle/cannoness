@@ -195,15 +195,13 @@ playScene = {
         //     ball.body.bounce.set(1);
         // }
 
-        this.ballSpeed = 300;
+        this.ballSpeed = 400;
         this.ballTime = 0;
         this.ballTimeOffset = 300;
         this.ballDirection = 'right';
 
         // Gravity
         this.gravity = 2000;
-        // this.player.body.setAllowGravity(false);
-        // this.player.body.drag.set(50);
         this.player.setGravity(0, this.gravity);
 
         // Controls
@@ -234,14 +232,34 @@ playScene = {
         this.player.body.setVelocityX(0);
 
         if (this.cursors.right.isDown) {
-            console.log('RIGHT');
             this.player.body.setVelocityX(this.playerSpeed);
-            this.ballDirection = 'right';
+            if (this.cursors.up.isDown) {
+                console.log('UP-RIGHT');
+                this.ballDirection = 'up-right';
+            }
+            else if (this.cursors.down.isDown) {
+                console.log('DOWN-RIGHT');
+                this.ballDirection = 'down-right';
+            }
+            else {
+                console.log('RIGHT');
+                this.ballDirection = 'right';
+            }
         }
         else if (this.cursors.left.isDown) {
-            console.log('LEFT');
             this.player.body.setVelocityX(-this.playerSpeed);
-            this.ballDirection = 'left';
+            if (this.cursors.up.isDown) {
+                console.log('UP-LEFT');
+                this.ballDirection = 'up-left';
+            }
+            else if (this.cursors.down.isDown) {
+                console.log('DOWN-LEFT');
+                this.ballDirection = 'down-left';
+            }
+            else {
+                console.log('LEFT');
+                this.ballDirection = 'left';
+            }
         }
         else if (this.cursors.up.isDown) {
             console.log('UP');
@@ -307,10 +325,34 @@ playScene = {
                         ball.setPosition(this.player.x, this.player.y - 32);
                         ball.body.setVelocityY(-this.ballSpeed);
                     }
+                    else if (this.ballDirection === 'up-right' &&
+                             !this.player.body.touching.up &&
+                             !this.player.body.touching.right) {
+                        ball.setPosition(this.player.x + 32, this.player.y - 32);
+                        this.physics.velocityFromAngle(-45, this.ballSpeed, ball.body.velocity);
+                    }
+                    else if (this.ballDirection === 'up-left' &&
+                             !this.player.body.touching.up &&
+                             !this.player.body.touching.left) {
+                        ball.setPosition(this.player.x - 32, this.player.y - 32);
+                        this.physics.velocityFromAngle(-135, this.ballSpeed, ball.body.velocity);
+                    }
                     else if (this.ballDirection === 'down' &&
                              !this.player.body.touching.down) {
                         ball.setPosition(this.player.x, this.player.y + 32);
                         ball.body.setVelocityY(this.ballSpeed);
+                    }
+                    else if (this.ballDirection === 'down-right' &&
+                             !this.player.body.touching.down &&
+                             !this.player.body.touching.right) {
+                        ball.setPosition(this.player.x + 32, this.player.y + 32);
+                        this.physics.velocityFromAngle(45, this.ballSpeed, ball.body.velocity);
+                    }
+                    else if (this.ballDirection === 'down-left' &&
+                             !this.player.body.touching.down &&
+                             !this.player.body.touching.left) {
+                        ball.setPosition(this.player.x - 32, this.player.y + 32);
+                        this.physics.velocityFromAngle(135, this.ballSpeed, ball.body.velocity);
                     }
                 }
                 else {
