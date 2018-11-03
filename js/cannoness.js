@@ -99,14 +99,9 @@ playScene = {
     key: 'play',
     create: function() {
         'use strict';
-        var height, width, block, i, ball;
+        var height, width, block, i, balls, ball;
 
         console.log('[PLAY] create');
-
-        // this.keyboard = game.input.keyboard;
-
-        // game.physics.startSystem(Phaser.Physics.ARCADE);
-
 
         // Platforms
         this.platforms = this.physics.add.staticGroup();
@@ -179,7 +174,16 @@ playScene = {
             key: 'ball',
             active: false,
             repeat: 5,
-            // setXY: { x: 12, y: 0, stepX: 70 }
+            setXY: { x: 0, y: -50, stepX: 50 }
+        });
+
+        balls = this.balls
+        i = 0;
+        balls.children.iterate(function(ball) {
+            // ball.body.setCircle(16);
+            ball.index = i;
+            i++;
+            balls.killAndHide(ball);
         });
 
         // this.balls.setAll('outOfBoundsKill', true);
@@ -217,8 +221,10 @@ playScene = {
         this.physics.add.collider(this.balls);
         this.physics.add.overlap(this.player, this.balls,
                                  this.grabBall, null, this);
-        // game.physics.arcade.overlap(this.balls, this.balls,
-        //                             this.separateBalls, null, this);
+        // this.physics.add.overlap(this.balls, this.balls,
+        //                          this.separateBalls, this.checkBalls, this);
+        this.physics.add.overlap(this.balls, this.balls,
+                                 this.separateBalls, null, this);
     },
     update: function() {
         'use strict';
@@ -316,9 +322,34 @@ playScene = {
             'use strict';
 
             this.balls.killAndHide(ball);
+            ball.setPosition(ball.index * 50, -50);
+        },
+        checkBalls: function(ball1, ball2) {
+            'use strict';
+            console.log('[PLAY] checkBalls');
+            console.log(ball1.x + ' ' + ball2.x);
+            if (Math.abs(ball1.y - ball2.y) < 16 &&
+                Phaser.Math.Distance.Between(ball1.x, ball1.y, ball2.x, ball2.y) < 16) {
+                return true;
+            }
+
+            return false;
         },
         separateBalls: function(ball1, ball2) {
-
+            'use strict';
+            var overlapDist, force;
+            console.log('[PLAY] separateBalls');
+            console.log(ball1.x + ' ' + ball2.x);
+            overlapDist = 16 - Math.abs(ball1.x - ball2.x);
+            force = overlapDist + 16;
+            if (ball1.x <= ball2.x) {
+                ball1.body.setVelocityX(-force);
+                ball2.body.setVelocityX(force);
+            }
+            else {
+                ball1.body.setVelocityX(force);
+                ball2.body.setVelocityX(-force);
+            }
         },
         end: function() {
             'use strict';
@@ -327,6 +358,7 @@ playScene = {
         }
     }
 };
+
 
 endScene = {
     key: 'end',
