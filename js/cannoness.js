@@ -1,9 +1,9 @@
-var score, bootScene, loadScene, titleScene, playScene, endScene, game;
+var score, game;
 
 score = 0;
 
 
-bootScene = {
+const bootScene = {
     key: 'boot',
     active: true,
     init: (config) => {
@@ -24,7 +24,7 @@ bootScene = {
 };
 
 
-loadScene = {
+const loadScene = {
     key: 'load',
     renderToTexture: true,
     x: 64,
@@ -61,7 +61,7 @@ loadScene = {
 };
 
 
-titleScene = {
+const titleScene = {
     key: 'title',
     init: (config) => {
         console.log('[TITLE] init', config);
@@ -95,7 +95,7 @@ titleScene = {
 };
 
 
-playScene = {
+const playScene = {
     key: 'play',
     create: function() {
         'use strict';
@@ -402,7 +402,7 @@ playScene = {
 };
 
 
-endScene = {
+const endScene = {
     key: 'end',
     create: function() {
         'use strict';
