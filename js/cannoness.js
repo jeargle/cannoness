@@ -177,7 +177,7 @@ const playScene = {
             setXY: { x: 0, y: -50, stepX: 50 }
         });
 
-        balls = this.balls
+        balls = this.balls;
         i = 0;
         balls.children.iterate(function(ball) {
             // ball.body.setCircle(16);
