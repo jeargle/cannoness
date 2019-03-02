@@ -1,4 +1,4 @@
-var score, game
+let score, game
 
 score = 0
 
@@ -36,11 +36,10 @@ const loadScene = {
     },
     preload: function() {
         'use strict'
-        var loadLbl
 
-        loadLbl = this.add.text(80, 160, 'loading...',
-                                {font: '30px Courier',
-                                 fill: '#ffffff'})
+        this.add.text(80, 160, 'loading...',
+                      {font: '30px Courier',
+                       fill: '#ffffff'})
 
         // Load images
         this.load.image('player', 'assets/square-red.png')
@@ -71,14 +70,13 @@ const titleScene = {
     },
     create: function() {
         'use strict'
-        var nameLbl, startLbl
 
-        nameLbl = this.add.text(80, 160, 'CANNONESS',
-                                {font: '50px Courier',
-                                 fill: '#ffffff'})
-        startLbl = this.add.text(80, 240, 'press "W" to start',
-                                 {font: '30px Courier',
-                                  fill: '#ffffff'})
+       this.add.text(80, 160, 'CANNONESS',
+                     {font: '50px Courier',
+                      fill: '#ffffff'})
+        this.add.text(80, 240, 'press "W" to start',
+                      {font: '30px Courier',
+                       fill: '#ffffff'})
 
         this.input.keyboard.on('keydown_W', this.start, this)
     },
@@ -99,18 +97,17 @@ const playScene = {
     key: 'play',
     create: function() {
         'use strict'
-        var height, width, block, i, balls, ball
 
         console.log('[PLAY] create')
 
         // Platforms
         this.platforms = this.physics.add.staticGroup()
 
-        height = 600
-        width = 800
+        let height = 600
+        let width = 800
 
         // Ground
-        block = this.platforms.create(0, height - 32, 'platform')
+        let block = this.platforms.create(0, height - 32, 'platform')
             .setOrigin(0, 0)
             .setScale(25, 1)
             .refreshBody()
@@ -177,8 +174,8 @@ const playScene = {
             setXY: { x: 0, y: -50, stepX: 50 }
         })
 
-        balls = this.balls
-        i = 0
+        let balls = this.balls
+        let i = 0
         balls.children.iterate(function(ball) {
             // ball.body.setCircle(16)
             ball.index = i
@@ -295,13 +292,12 @@ const playScene = {
     extend: {
         fire: function() {
             'use strict'
-            var ball
 
             console.log('fire()')
 
             if (this.time.now > this.ballTime) {
                 this.ballTime = this.time.now + this.ballTimeOffset
-                ball = this.balls.getFirstDead()
+                let ball = this.balls.getFirstDead()
 
                 if (ball) {
                     ball.active = true
@@ -379,11 +375,13 @@ const playScene = {
         },
         separateBalls: function(ball1, ball2) {
             'use strict'
-            var overlapDist, force
-            console.log('[PLAY] separateBalls')
-            console.log(ball1.x + ' ' + ball2.x)
-            overlapDist = 16 - Math.abs(ball1.x - ball2.x)
-            force = overlapDist + 16
+
+            // console.log('[PLAY] separateBalls')
+            // console.log(ball1.x + ' ' + ball2.x)
+
+            let overlapDist = 16 - Math.abs(ball1.x - ball2.x)
+            let force = overlapDist + 16
+
             if (ball1.x <= ball2.x) {
                 ball1.body.setVelocityX(-force)
                 ball2.body.setVelocityX(force)
@@ -406,17 +404,16 @@ const endScene = {
     key: 'end',
     create: function() {
         'use strict'
-        var scoreLbl, nameLbl, startLbl
 
-        scoreLbl = this.add.text(600, 10, 'Score: ' + score,
-                                 {font: '30px Courier',
-                                  fill: '#ffffff'})
-        nameLbl = this.add.text(80, 160, 'YOU DIED',
-                                {font: '50px Courier',
-                                 fill: '#ffffff'})
-        startLbl = this.add.text(80, 240, 'press "W" to restart',
-                                 {font: '30px Courier',
-                                  fill: '#ffffff'})
+        this.add.text(600, 10, 'Score: ' + score,
+                      {font: '30px Courier',
+                       fill: '#ffffff'})
+        this.add.text(80, 160, 'YOU DIED',
+                      {font: '50px Courier',
+                       fill: '#ffffff'})
+        this.add.text(80, 240, 'press "W" to restart',
+                      {font: '30px Courier',
+                       fill: '#ffffff'})
 
         this.input.keyboard.on('keydown_W', this.restart, this)
     },
