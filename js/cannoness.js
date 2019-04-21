@@ -3,38 +3,49 @@ let score, game
 score = 0
 
 
-const bootScene = {
-    key: 'boot',
-    active: true,
-    init: (config) => {
+class BootScene extends Phaser.Scene {
+    // active: true,
+    constructor() {
+        super('boot')
+    }
+
+    init(config) {
         console.log('[BOOT] init', config)
-    },
-    preload: () => {
+    }
+
+    preload() {
         console.log('[BOOT] preload')
-    },
-    create: function() {
+    }
+
+    create() {
         'use strict'
 
         game.scene.start('load')
         game.scene.remove('boot')
-    },
-    update: () => {
+    }
+
+    update() {
         console.log('[BOOT] update')
     }
 }
 
 
-const loadScene = {
-    key: 'load',
-    renderToTexture: true,
-    x: 64,
-    y: 64,
-    width: 320,
-    height: 200,
-    init: (config) => {
+class LoadScene extends Phaser.Scene {
+    // renderToTexture: true,
+    // x: 64,
+    // y: 64,
+    // width: 320,
+    // height: 200,
+
+    constructor() {
+        super('load')
+    }
+
+    init(config) {
         console.log('[LOAD] init', config)
-    },
-    preload: function() {
+    }
+
+    preload() {
         'use strict'
 
         this.add.text(80, 160, 'loading...',
@@ -48,27 +59,34 @@ const loadScene = {
         this.load.image('ball', 'assets/ball.png')
 
         // Load sound effects
-    },
-    create: function() {
+    }
+
+    create() {
         'use strict'
         game.scene.start('title')
         game.scene.remove('load')
-    },
-    update: () => {
+    }
+
+    update() {
         console.log('[LOAD] update')
     }
 }
 
 
-const titleScene = {
-    key: 'title',
-    init: (config) => {
+class TitleScene extends Phaser.Scene {
+    constructor() {
+        super('title')
+    }
+
+    init(config) {
         console.log('[TITLE] init', config)
-    },
-    preload: () => {
+    }
+
+    preload() {
         console.log('[TITLE] preload')
-    },
-    create: function() {
+    }
+
+    create() {
         'use strict'
 
        this.add.text(80, 160, 'CANNONESS',
@@ -79,23 +97,26 @@ const titleScene = {
                        fill: '#ffffff'})
 
         this.input.keyboard.on('keydown_W', this.start, this)
-    },
-    update: () => {
+    }
+
+    update() {
         console.log('[TITLE] update')
-    },
-    extend: {
-        start: function() {
-            'use strict'
-            console.log('[TITLE] start')
-            game.scene.switch('title', 'play')
-        }
+    }
+
+    start() {
+        'use strict'
+        console.log('[TITLE] start')
+        game.scene.switch('title', 'play')
     }
 }
 
 
-const playScene = {
-    key: 'play',
-    create: function() {
+class PlayScene extends Phaser.Scene {
+    constructor() {
+        super('play')
+    }
+
+    create() {
         'use strict'
 
         console.log('[PLAY] create')
@@ -220,8 +241,9 @@ const playScene = {
         //                          this.separateBalls, this.checkBalls, this)
         this.physics.add.overlap(this.balls, this.balls,
                                  this.separateBalls, null, this)
-    },
-    update: function() {
+    }
+
+    update() {
         'use strict'
 
         console.log('[PLAY] update')
@@ -288,121 +310,127 @@ const playScene = {
         if (this.cursors.fire.isDown) {
             this.fire()
         }
-    },
-    extend: {
-        fire: function() {
-            'use strict'
+    }
 
-            console.log('fire()')
+    fire() {
+        'use strict'
 
-            if (this.time.now > this.ballTime) {
-                this.ballTime = this.time.now + this.ballTimeOffset
-                let ball = this.balls.getFirstDead()
+        console.log('fire()')
 
-                if (ball) {
-                    ball.active = true
-                    ball.visible = true
-                    ball.body.bounce.set(0.1)
-                    ball.body.drag.set(50)
-                    if (this.ballDirection === 'right' &&
-                        !this.player.body.touching.right) {
-                        ball.setPosition(this.player.x + 32, this.player.y)
-                        ball.body.setVelocityX(this.ballSpeed)
-                        ball.body.setVelocityY(-100)
-                    }
-                    else if (this.ballDirection === 'left' &&
-                             !this.player.body.touching.left) {
-                        ball.setPosition(this.player.x - 32, this.player.y)
-                        ball.body.setVelocityX(-this.ballSpeed)
-                        ball.body.setVelocityY(-100)
-                    }
-                    else if (this.ballDirection === 'up' &&
-                             !this.player.body.touching.up) {
-                        ball.setPosition(this.player.x, this.player.y - 32)
-                        ball.body.setVelocityY(-this.ballSpeed)
-                    }
-                    else if (this.ballDirection === 'up-right' &&
-                             !this.player.body.touching.up &&
-                             !this.player.body.touching.right) {
-                        ball.setPosition(this.player.x + 32, this.player.y - 32)
-                        this.physics.velocityFromAngle(-45, this.ballSpeed, ball.body.velocity)
-                    }
-                    else if (this.ballDirection === 'up-left' &&
-                             !this.player.body.touching.up &&
-                             !this.player.body.touching.left) {
-                        ball.setPosition(this.player.x - 32, this.player.y - 32)
-                        this.physics.velocityFromAngle(-135, this.ballSpeed, ball.body.velocity)
-                    }
-                    else if (this.ballDirection === 'down' &&
-                             !this.player.body.touching.down) {
-                        ball.setPosition(this.player.x, this.player.y + 32)
-                        ball.body.setVelocityY(this.ballSpeed)
-                    }
-                    else if (this.ballDirection === 'down-right' &&
-                             !this.player.body.touching.down &&
-                             !this.player.body.touching.right) {
-                        ball.setPosition(this.player.x + 32, this.player.y + 32)
-                        this.physics.velocityFromAngle(45, this.ballSpeed, ball.body.velocity)
-                    }
-                    else if (this.ballDirection === 'down-left' &&
-                             !this.player.body.touching.down &&
-                             !this.player.body.touching.left) {
-                        ball.setPosition(this.player.x - 32, this.player.y + 32)
-                        this.physics.velocityFromAngle(135, this.ballSpeed, ball.body.velocity)
-                    }
+        if (this.time.now > this.ballTime) {
+            this.ballTime = this.time.now + this.ballTimeOffset
+            let ball = this.balls.getFirstDead()
+
+            if (ball) {
+                ball.active = true
+                ball.visible = true
+                ball.body.bounce.set(0.1)
+                ball.body.drag.set(50)
+                if (this.ballDirection === 'right' &&
+                    !this.player.body.touching.right) {
+                    ball.setPosition(this.player.x + 32, this.player.y)
+                    ball.body.setVelocityX(this.ballSpeed)
+                    ball.body.setVelocityY(-100)
                 }
-                else {
-                    console.log('no ball available')
+                else if (this.ballDirection === 'left' &&
+                         !this.player.body.touching.left) {
+                    ball.setPosition(this.player.x - 32, this.player.y)
+                    ball.body.setVelocityX(-this.ballSpeed)
+                    ball.body.setVelocityY(-100)
                 }
-            }
-        },
-        grabBall: function(player, ball) {
-            'use strict'
-
-            this.balls.killAndHide(ball)
-            ball.setPosition(ball.index * 50, -50)
-        },
-        checkBalls: function(ball1, ball2) {
-            'use strict'
-            console.log('[PLAY] checkBalls')
-            console.log(ball1.x + ' ' + ball2.x)
-            if (Math.abs(ball1.y - ball2.y) < 16 &&
-                Phaser.Math.Distance.Between(ball1.x, ball1.y, ball2.x, ball2.y) < 16) {
-                return true
-            }
-
-            return false
-        },
-        separateBalls: function(ball1, ball2) {
-            'use strict'
-
-            // console.log('[PLAY] separateBalls')
-            // console.log(ball1.x + ' ' + ball2.x)
-
-            let overlapDist = 16 - Math.abs(ball1.x - ball2.x)
-            let force = overlapDist + 16
-
-            if (ball1.x <= ball2.x) {
-                ball1.body.setVelocityX(-force)
-                ball2.body.setVelocityX(force)
+                else if (this.ballDirection === 'up' &&
+                         !this.player.body.touching.up) {
+                    ball.setPosition(this.player.x, this.player.y - 32)
+                    ball.body.setVelocityY(-this.ballSpeed)
+                }
+                else if (this.ballDirection === 'up-right' &&
+                         !this.player.body.touching.up &&
+                         !this.player.body.touching.right) {
+                    ball.setPosition(this.player.x + 32, this.player.y - 32)
+                    this.physics.velocityFromAngle(-45, this.ballSpeed, ball.body.velocity)
+                }
+                else if (this.ballDirection === 'up-left' &&
+                         !this.player.body.touching.up &&
+                         !this.player.body.touching.left) {
+                    ball.setPosition(this.player.x - 32, this.player.y - 32)
+                    this.physics.velocityFromAngle(-135, this.ballSpeed, ball.body.velocity)
+                }
+                else if (this.ballDirection === 'down' &&
+                         !this.player.body.touching.down) {
+                    ball.setPosition(this.player.x, this.player.y + 32)
+                    ball.body.setVelocityY(this.ballSpeed)
+                }
+                else if (this.ballDirection === 'down-right' &&
+                         !this.player.body.touching.down &&
+                         !this.player.body.touching.right) {
+                    ball.setPosition(this.player.x + 32, this.player.y + 32)
+                    this.physics.velocityFromAngle(45, this.ballSpeed, ball.body.velocity)
+                }
+                else if (this.ballDirection === 'down-left' &&
+                         !this.player.body.touching.down &&
+                         !this.player.body.touching.left) {
+                    ball.setPosition(this.player.x - 32, this.player.y + 32)
+                    this.physics.velocityFromAngle(135, this.ballSpeed, ball.body.velocity)
+                }
             }
             else {
-                ball1.body.setVelocityX(force)
-                ball2.body.setVelocityX(-force)
+                console.log('no ball available')
             }
-        },
-        end: function() {
-            'use strict'
-            console.log('[PLAY] end')
-            game.scene.switch('play', 'end')
         }
+    }
+
+    grabBall(player, ball) {
+        'use strict'
+
+        this.balls.killAndHide(ball)
+        ball.setPosition(ball.index * 50, -50)
+    }
+
+    checkBalls(ball1, ball2) {
+        'use strict'
+        console.log('[PLAY] checkBalls')
+        console.log(ball1.x + ' ' + ball2.x)
+        if (Math.abs(ball1.y - ball2.y) < 16 &&
+            Phaser.Math.Distance.Between(ball1.x, ball1.y, ball2.x, ball2.y) < 16) {
+            return true
+        }
+
+        return false
+    }
+
+    separateBalls(ball1, ball2) {
+        'use strict'
+
+        // console.log('[PLAY] separateBalls')
+        // console.log(ball1.x + ' ' + ball2.x)
+
+        let overlapDist = 16 - Math.abs(ball1.x - ball2.x)
+        let force = overlapDist + 16
+
+        if (ball1.x <= ball2.x) {
+            ball1.body.setVelocityX(-force)
+            ball2.body.setVelocityX(force)
+        }
+        else {
+            ball1.body.setVelocityX(force)
+            ball2.body.setVelocityX(-force)
+        }
+    }
+
+    end() {
+        'use strict'
+        console.log('[PLAY] end')
+        game.scene.switch('play', 'end')
     }
 }
 
 
-const endScene = {
-    key: 'end',
-    create: function() {
+class EndScene extends Phaser.Scene {
+    constructor() {
+        super('end')
+    }
+
+    create() {
         'use strict'
 
         this.add.text(600, 10, 'Score: ' + score,
@@ -416,12 +444,11 @@ const endScene = {
                        fill: '#ffffff'})
 
         this.input.keyboard.on('keydown_W', this.restart, this)
-    },
-    extend: {
-        restart: function() {
-            'use strict'
-            game.scene.switch('end', 'title')
-        }
+    }
+
+    restart() {
+        'use strict'
+        game.scene.switch('end', 'title')
     }
 }
 
@@ -440,11 +467,11 @@ const gameConfig = {
         }
     },
     scene: [
-        bootScene,
-        loadScene,
-        titleScene,
-        playScene,
-        endScene
+        BootScene,
+        LoadScene,
+        TitleScene,
+        PlayScene,
+        EndScene
     ]
 }
 
