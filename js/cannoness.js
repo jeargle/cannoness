@@ -4,7 +4,6 @@ score = 0
 
 
 class BootScene extends Phaser.Scene {
-    // active: true,
     constructor() {
         super('boot')
     }
@@ -18,8 +17,6 @@ class BootScene extends Phaser.Scene {
     }
 
     create() {
-        'use strict'
-
         game.scene.start('load')
         game.scene.remove('boot')
     }
@@ -31,12 +28,6 @@ class BootScene extends Phaser.Scene {
 
 
 class LoadScene extends Phaser.Scene {
-    // renderToTexture: true,
-    // x: 64,
-    // y: 64,
-    // width: 320,
-    // height: 200,
-
     constructor() {
         super('load')
     }
@@ -46,8 +37,6 @@ class LoadScene extends Phaser.Scene {
     }
 
     preload() {
-        'use strict'
-
         this.add.text(80, 160, 'loading...',
                       {font: '30px Courier',
                        fill: '#ffffff'})
@@ -62,7 +51,6 @@ class LoadScene extends Phaser.Scene {
     }
 
     create() {
-        'use strict'
         game.scene.start('title')
         game.scene.remove('load')
     }
@@ -87,8 +75,6 @@ class TitleScene extends Phaser.Scene {
     }
 
     create() {
-        'use strict'
-
        this.add.text(80, 160, 'CANNONESS',
                      {font: '50px Courier',
                       fill: '#ffffff'})
@@ -104,7 +90,6 @@ class TitleScene extends Phaser.Scene {
     }
 
     start() {
-        'use strict'
         console.log('[TITLE] start')
         game.scene.switch('title', 'play')
     }
@@ -117,8 +102,6 @@ class PlayScene extends Phaser.Scene {
     }
 
     create() {
-        'use strict'
-
         console.log('[PLAY] create')
 
         // Platforms
@@ -244,8 +227,6 @@ class PlayScene extends Phaser.Scene {
     }
 
     update() {
-        'use strict'
-
         console.log('[PLAY] update')
 
         this.player.body.setVelocityX(0)
@@ -313,8 +294,6 @@ class PlayScene extends Phaser.Scene {
     }
 
     fire() {
-        'use strict'
-
         console.log('fire()')
 
         if (this.time.now > this.ballTime) {
@@ -380,14 +359,11 @@ class PlayScene extends Phaser.Scene {
     }
 
     grabBall(player, ball) {
-        'use strict'
-
         this.balls.killAndHide(ball)
         ball.setPosition(ball.index * 50, -50)
     }
 
     checkBalls(ball1, ball2) {
-        'use strict'
         console.log('[PLAY] checkBalls')
         console.log(ball1.x + ' ' + ball2.x)
         if (Math.abs(ball1.y - ball2.y) < 16 &&
@@ -399,8 +375,6 @@ class PlayScene extends Phaser.Scene {
     }
 
     separateBalls(ball1, ball2) {
-        'use strict'
-
         // console.log('[PLAY] separateBalls')
         // console.log(ball1.x + ' ' + ball2.x)
 
@@ -418,7 +392,6 @@ class PlayScene extends Phaser.Scene {
     }
 
     end() {
-        'use strict'
         console.log('[PLAY] end')
         game.scene.switch('play', 'end')
     }
@@ -431,8 +404,6 @@ class EndScene extends Phaser.Scene {
     }
 
     create() {
-        'use strict'
-
         this.add.text(600, 10, 'Score: ' + score,
                       {font: '30px Courier',
                        fill: '#ffffff'})
@@ -447,7 +418,6 @@ class EndScene extends Phaser.Scene {
     }
 
     restart() {
-        'use strict'
         game.scene.switch('end', 'title')
     }
 }
