@@ -4,6 +4,17 @@ cannoness
 phaser cannon blasting platformer
 
 
+Controls
+--------
+
+* W - point cannon up
+* A - move/point cannon left
+* S - point cannon down
+* D - move/point cannon right
+* SPACE - jump
+* SHIFT - fire
+
+
 How to Run
 ----------
 
@@ -21,4 +32,4 @@ Dependencies
 
 Dependencies are included.
 
-1. phaser
+* phaser
