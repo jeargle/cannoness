@@ -180,7 +180,7 @@ class PlayScene extends Phaser.Scene {
 
         let balls = this.balls
         let i = 0
-        balls.children.iterate(function(ball) {
+        balls.children.forEach(function(ball) {
             // ball.body.setCircle(16)
             ball.index = i
             i++
